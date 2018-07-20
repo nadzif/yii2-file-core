@@ -106,7 +106,7 @@ class File extends Component
             throw new ForbiddenHttpException('Please login to continue upload');
         }
 
-        if (ArrayHelper::isIn($fileInstance->extension, $this->getAllowedExtensions())) {
+        if (!ArrayHelper::isIn($fileInstance->extension, $this->getAllowedExtensions())) {
             throw new ForbiddenHttpException('File extension not allowed');
         }
 
