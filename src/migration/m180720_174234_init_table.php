@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `file`.
  */
-class m180720_174234_create_file_table extends Migration
+class m180720_174234_init_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -26,14 +26,14 @@ class m180720_174234_create_file_table extends Migration
             'originalName'          => $this->string()->notNull(),
             'alias'                 => $this->string()->notNull(),
             'path'                  => $this->string()->notNull(),
-            'fileName'              => $this->string()->notNull(),
+            'filename'              => $this->string()->notNull(),
             'size'                  => $this->double()->notNull(),
-            'extension'             => $this->string()->notNull(),
-            'mimeType'              => $this->string()->notNull(),
-            'thumbnailFileName'     => $this->string(),
+            'extension'             => $this->string(15)->notNull(),
+            'mimeType'              => $this->string(100)->notNull(),
+            'thumbnailFilename'     => $this->string(),
             'thumbnailSize'         => $this->double(),
-            'thumbnailExtension'    => $this->string(),
-            'thumbnailMimeType'     => $this->string(),
+            'thumbnailExtension'    => $this->string(15),
+            'thumbnailMimeType'     => $this->string(100),
             'additionalInformation' => $this->text(),
             'createdBy'             => $this->bigInteger()->unsigned()->null(),
             'createdAt'             => $this->dateTime(),
