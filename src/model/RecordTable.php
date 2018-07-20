@@ -56,20 +56,33 @@ class RecordTable extends ActiveRecord
     const ALIAS_FRONTEND = '@frontend';
     const ALIAS_WEB      = '@web';
 
+    /** @var File */
+    private $fileManager;
 
     public static function tableName()
     {
-        return '{{%' .File::$tableName. '}}';
+        return '{{%' . File::$tableName . '}}';
+    }
+
+    public function init()
+    {
+        $this->fileManager = \Yii::$app->fileManager;
+        parent::init();
     }
 
     public function rules()
     {
         $rules   = parent::rules();
-        $rules[] = ['size', 'double', 'max' => File::$maximum];
+        $rules[] = ['size', 'double', 'max' => $this->fileManager->maximumAllowedSize];
         return $rules;
     }
 
     public function createThumbnail($extension = 'jpg', $replaceExist = true, $filename = null)
+    {
+
+    }
+
+    public function getFullPath()
     {
 
     }
@@ -80,11 +93,6 @@ class RecordTable extends ActiveRecord
     }
 
     public function getSource()
-    {
-
-    }
-
-    public function getFullPath()
     {
 
     }
