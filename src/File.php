@@ -103,14 +103,11 @@ class File extends Component
     {
 
         if (!$this->allowGuestToUpload && \Yii::$app->user->isGuest) {
-            throw new ForbiddenHttpException();
+            throw new ForbiddenHttpException('Please login to continue upload');
         }
 
-        $allowedExtensions = ArrayHelper::merge($this->allowedImageExtensions, $this->allowedDocumentExtensions,
-            $this->allowedAudioExtensions, $this->allowedVideoExtensions, $this->allowedOtherExtensions);
-
-        if (ArrayHelper::isIn($fileInstance->extension, $allowedExtensions)) {
-            throw new ForbiddenHttpException();
+        if (ArrayHelper::isIn($fileInstance->extension, $this->getAllowedExtensions())) {
+            throw new ForbiddenHttpException('File extension not allowed');
         }
 
         $model = new RecordTable();
@@ -150,6 +147,17 @@ class File extends Component
         return $model;
     }
 
+    public function getAllowedExtensions()
+    {
+        return ArrayHelper::merge(
+            $this->allowedImageExtensions,
+            $this->allowedDocumentExtensions,
+            $this->allowedAudioExtensions,
+            $this->allowedVideoExtensions,
+            $this->allowedOtherExtensions
+        );
+    }
+
     public static function slug($text, $length = null)
     {
         $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
@@ -164,7 +172,6 @@ class File extends Component
             return $text;
         }
     }
-
 
 
 }
