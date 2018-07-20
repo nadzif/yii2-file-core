@@ -20,7 +20,7 @@ class File extends Component
     /**
      * Table config
      */
-    public $tableName = 'file';
+    public static $tableName = 'file';
 
     /**
      * Upload config

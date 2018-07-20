@@ -56,9 +56,10 @@ class RecordTable extends ActiveRecord
     const ALIAS_FRONTEND = '@frontend';
     const ALIAS_WEB      = '@web';
 
+
     public static function tableName()
     {
-        return '{{%' . File::$tableName . '}}';
+        return '{{%' .File::$tableName. '}}';
     }
 
     public function rules()
