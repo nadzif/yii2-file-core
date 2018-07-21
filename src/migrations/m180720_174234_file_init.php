@@ -20,7 +20,7 @@ class m180720_174234_file_init extends Migration
                 $tableOptions = null;
         }
 
-        $this->createTable(\nadzif\file\model\RecordTable::tableName(), [
+        $this->createTable(\nadzif\file\model\File::tableName(), [
             'id'                    => $this->bigPrimaryKey()->unsigned(),
             'type'                  => $this->string(50),
             'originalName'          => $this->string()->notNull(),
@@ -50,6 +50,6 @@ class m180720_174234_file_init extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable(\nadzif\file\model\RecordTable::tableName());
+        $this->dropTable(\nadzif\file\model\File::tableName());
     }
 }

@@ -9,13 +9,13 @@
 namespace nadzif\file;
 
 
-use nadzif\file\model\RecordTable;
+use nadzif\file\model\File;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\UploadedFile;
 
-class File extends Component
+class FileManager extends Component
 {
     /**
      * Table config
@@ -28,9 +28,9 @@ class File extends Component
     public $directoryMode = 0777;
 
     public $allowGuestToUpload = false;
-    public $alias              = RecordTable::ALIAS_WEB;
+    public $alias              = File::ALIAS_WEB;
     public $uploadFolder       = 'uploads';
-    public $maximumAllowedSize = 88388608;
+    public $maximumSizeAllowed = 88388608;
 
     public $allowedImageExtensions    = ['jpg', 'jpeg', 'png'];
     public $allowedDocumentExtensions = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'];
@@ -46,7 +46,6 @@ class File extends Component
 
     public $thumbnailNameFormat = '{filename}_thumb';
     public $thumbnailExtension  = 'jpg';
-
 
     public $defaultImageThumbnail    = null;
     public $defaultDocumentThumbnail = null;
@@ -77,7 +76,7 @@ class File extends Component
      * @param string         $path
      * @param string         $additionalInformation
      *
-     * @return RecordTable[]
+     * @return File[]
      * @throws ForbiddenHttpException
      */
     public function uploads($fileInstances, $path = null, $additionalInformation = null)
@@ -96,7 +95,7 @@ class File extends Component
      * @param string       $path
      * @param string       $additionalInformation
      *
-     * @return RecordTable
+     * @return File
      * @throws ForbiddenHttpException
      */
     public function upload(UploadedFile $fileInstance, $path = null, $additionalInformation = null)
@@ -110,14 +109,25 @@ class File extends Component
             throw new ForbiddenHttpException('File extension not allowed');
         }
 
-        $model = new RecordTable();
+        $model = new File();
 
-        $model->originalName = $fileInstance->name;
-        $model->alias        = $this->alias;
+        if (ArrayHelper::isIn($fileInstance->extension, $this->allowedImageExtensions)) {
+            $model->type = File::TYPE_IMAGE;
+        } elseif (ArrayHelper::isIn($fileInstance->extension, $this->allowedDocumentExtensions)) {
+            $model->type = File::TYPE_DOCUMENT;
+        } elseif (ArrayHelper::isIn($fileInstance->extension, $this->allowedAudioExtensions)) {
+            $model->type = File::TYPE_AUDIO;
+        } elseif (ArrayHelper::isIn($fileInstance->extension, $this->allowedVideoExtensions)) {
+            $model->type = File::TYPE_VIDEO;
+        } else {
+            $model->type = File::TYPE_OTHER;
+        }
 
+        $model->originalName          = $fileInstance->name;
+        $model->alias                 = $this->alias;
         $model->path                  = $this->uploadFolder . DIRECTORY_SEPARATOR;
         $model->path                  .= $path ? $path . DIRECTORY_SEPARATOR : '';
-        $model->filename              = self::slug($fileInstance->name) . '_' . time();
+        $model->filename              = self::slug($fileInstance->name) . '_' . dechex(time());
         $model->size                  = $fileInstance->size;
         $model->extension             = $fileInstance->extension;
         $model->mimeType              = $fileInstance->type;
@@ -125,7 +135,7 @@ class File extends Component
 
         $dirPath = \Yii::getAlias($model->alias) . DIRECTORY_SEPARATOR;
 
-        if ($model->alias == RecordTable::ALIAS_FRONTEND || $model->alias == RecordTable::ALIAS_BACKEND) {
+        if ($model->alias == File::ALIAS_FRONTEND || $model->alias == File::ALIAS_BACKEND) {
             $dirPath .= 'web' . DIRECTORY_SEPARATOR;
         }
 
