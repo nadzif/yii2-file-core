@@ -9,7 +9,7 @@
 namespace nadzif\file\model;
 
 
-use nadzif\file\File;
+use nadzif\file\FileManager;
 use yii\db\ActiveRecord;
 
 /**
@@ -56,12 +56,12 @@ class RecordTable extends ActiveRecord
     const ALIAS_FRONTEND = '@frontend';
     const ALIAS_WEB      = '@web';
 
-    /** @var File */
+    /** @var FileManager */
     private $fileManager;
 
     public static function tableName()
     {
-        return '{{%' . File::$tableName . '}}';
+        return '{{%' . FileManager::$tableName . '}}';
     }
 
     public function init()
@@ -84,7 +84,7 @@ class RecordTable extends ActiveRecord
 
     public function getFullPath()
     {
-
+        return $this->fileManager->allowedOtherExtensions;
     }
 
     public function getImagePreview()

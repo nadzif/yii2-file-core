@@ -30,7 +30,7 @@ class File extends Component
     public $allowGuestToUpload = false;
     public $alias              = RecordTable::ALIAS_WEB;
     public $uploadFolder       = 'uploads';
-    public $maximumAllowedSize = 1024 * 1024 * 8;
+    public $maximumAllowedSize = 88388608;
 
     public $allowedImageExtensions    = ['jpg', 'jpeg', 'png'];
     public $allowedDocumentExtensions = ['txt', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'];
