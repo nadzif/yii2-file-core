@@ -35,13 +35,8 @@ class m180720_000000_file_init extends Migration
             'thumbnailExtension'    => $this->string(15),
             'thumbnailMimeType'     => $this->string(100),
             'additionalInformation' => $this->text(),
-            'createdBy'             => $this->bigInteger()->unsigned()->null(),
             'createdAt'             => $this->dateTime(),
-            'updatedBy'             => $this->bigInteger()->unsigned()->null(),
             'updatedAt'             => $this->dateTime(),
-            'deletedBy'             => $this->bigInteger()->unsigned()->null(),
-            'deletedAt'             => $this->dateTime(),
-            'flag'                  => $this->integer(),
         ], $tableOptions);
     }
 

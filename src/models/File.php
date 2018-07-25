@@ -29,20 +29,10 @@ use yii\imagine\Image;
  * @property string  $thumbnailMimeType
  * @property string  $additionalInformation
  * @property string  $createdAt
- * @property integer $createdBy
  * @property string  $updatedAt
- * @property integer $updatedBy
- * @property string  $deletedAt
- * @property integer $deletedBy
- * @property integer $flag
  */
 class File extends ActiveRecord
 {
-    const FLAG_INSERTED = 0;
-    const FLAG_RESTORED = 1;
-    const FLAG_UPDATED  = 2;
-    const FLAG_DELETED  = 3;
-
     const TYPE_IMAGE    = 'image';
     const TYPE_DOCUMENT = 'document';
     const TYPE_VIDEO    = 'video';
