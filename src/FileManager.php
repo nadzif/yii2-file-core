@@ -123,11 +123,12 @@ class FileManager extends Component
             $model->type = File::TYPE_OTHER;
         }
 
+
         $model->originalName          = $fileInstance->name;
         $model->alias                 = $this->alias;
         $model->path                  = $this->uploadFolder . DIRECTORY_SEPARATOR;
         $model->path                  .= $path ? $path . DIRECTORY_SEPARATOR : '';
-        $model->filename              = self::slug($fileInstance->name) . '_' . dechex(time());
+        $model->filename              = self::slug($fileInstance->baseName) . '_' . dechex(time());
         $model->size                  = $fileInstance->size;
         $model->extension             = $fileInstance->extension;
         $model->mimeType              = $fileInstance->type;

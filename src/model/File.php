@@ -88,7 +88,7 @@ class File extends ActiveRecord
             ]);
 
         $fileLocation      = $this->getFullPath() . $this->getFullName();
-        $thumbnailLocation = $this->getFullPath() . $thumbnailExtension . '.' . $thumbnailFilename;
+        $thumbnailLocation = $this->getFullPath() . $thumbnailFilename . '.' . $thumbnailExtension;
         $thumbnailOptions  = $this->fileManager->thumbnailOptions;
         $thumbnailUploaded = false;
 
