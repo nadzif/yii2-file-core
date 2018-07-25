@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Nadzif Glovory
- * Date: 7/21/2018
- * Time: 12:34 AM
- */
 
 namespace nadzif\file;
 
 
-use nadzif\file\model\File;
+use nadzif\file\models\File;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;

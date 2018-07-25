@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Nadzif Glovory
- * Date: 7/21/2018
- * Time: 12:45 AM
- */
 
-namespace nadzif\file\model;
+namespace nadzif\file\models;
 
 
 use nadzif\file\FileManager;
+use yii\behaviors\AttributeBehavior;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\imagine\Image;
@@ -64,6 +60,21 @@ class File extends ActiveRecord
     public static function tableName()
     {
         return '{{%' . FileManager::$tableName . '}}';
+    }
+
+    public function behaviors()
+    {
+        return [
+            'timestampBehavior' => [
+                'class'              => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'updatedAt',
+            ],
+            'ownerBehavior'     => [
+                'class'     => AttributeBehavior::className(),
+                'attribute' => 'createdBy'
+            ]
+        ];
     }
 
     public function init()
@@ -149,6 +160,10 @@ class File extends ActiveRecord
         }
 
         if ($thumbnailUploaded) {
+            if ($this->hasThumbnail() && $replaceExist) {
+                $this->deleteThumbnail();
+            }
+
             $this->thumbnailExtension = $thumbnailExtension;
             $this->thumbnailFilename  = $thumbnailFilename;
             $this->save();
@@ -172,6 +187,37 @@ class File extends ActiveRecord
     public function getFullName()
     {
         return $this->filename . '.' . $this->extension;
+    }
+
+    public function hasThumbnail()
+    {
+        return $this->thumbnailFilename != null;
+    }
+
+    public function deleteThumbnail()
+    {
+        if ($this->hasThumbnail()) {
+            $thumbnailLocation = $this->getFullPath() . $this->getThumbnailFullName();
+
+            if (file_exists($thumbnailLocation)) {
+                unlink($thumbnailLocation);
+
+                $this->thumbnailFilename  = null;
+                $this->thumbnailExtension = null;
+                $this->thumbnailMimeType  = null;
+                $this->thumbnailSize      = null;
+
+                $this->save();
+                $this->refresh();
+            }
+        }
+
+        return true;
+    }
+
+    public function getThumbnailFullName()
+    {
+        return $this->thumbnailFilename . '.' . $this->thumbnailExtension;
     }
 
     public function getThumbnail($options = [])
@@ -209,16 +255,6 @@ class File extends ActiveRecord
         return $thumbnailSource;
     }
 
-    public function hasThumbnail()
-    {
-        return $this->thumbnailFilename != null;
-    }
-
-    public function getThumbnailFullName()
-    {
-        return $this->thumbnailFilename . '.' . $this->thumbnailExtension;
-    }
-
     public function getSource()
     {
         if (isset(\Yii::$app->frontendUrlManager)) {
@@ -245,27 +281,6 @@ class File extends ActiveRecord
         $fileLocation = $this->getFullPath() . $this->getFullName();
         if (file_exists($fileLocation)) {
             unlink($fileLocation);
-        }
-
-        return true;
-    }
-
-    public function deleteThumbnail()
-    {
-        if ($this->hasThumbnail()) {
-            $thumbnailLocation = $this->getFullPath() . $this->getThumbnailFullName();
-
-            if (file_exists($thumbnailLocation)) {
-                unlink($thumbnailLocation);
-
-                $this->thumbnailFilename  = null;
-                $this->thumbnailExtension = null;
-                $this->thumbnailMimeType  = null;
-                $this->thumbnailSize      = null;
-
-                $this->save();
-                $this->refresh();
-            }
         }
 
         return true;
