@@ -59,10 +59,6 @@ class File extends ActiveRecord
                 'class'              => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'updatedAt',
-            ],
-            'ownerBehavior'     => [
-                'class'     => AttributeBehavior::className(),
-                'attribute' => 'createdBy'
             ]
         ];
     }
