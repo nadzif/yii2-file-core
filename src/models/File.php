@@ -232,11 +232,12 @@ class File extends ActiveRecord
         }
 
         if ($this->hasThumbnail()) {
-            if (isset(\Yii::$app->frontendUrlManager->baseUrl)) {
+
+            if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
                 $source = \Yii::$app->frontendUrlManager->baseUrl;
             } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
                 $source = \Yii::$app->urlManager->baseUrl;
-            } else {
+            }else{
                 $source = DIRECTORY_SEPARATOR;
             }
 
@@ -250,11 +251,11 @@ class File extends ActiveRecord
 
     public function getSource()
     {
-        if (isset(\Yii::$app->frontendUrlManager->baseUrl)) {
+        if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
             $source = \Yii::$app->frontendUrlManager->baseUrl;
         } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
             $source = \Yii::$app->urlManager->baseUrl;
-        } else {
+        }else{
             $source = DIRECTORY_SEPARATOR;
         }
 
