@@ -240,7 +240,7 @@ class File extends ActiveRecord
                 $source = '/';
             }
 
-            $thumbnailLocation = $source . $this->path . $this->getFullName();
+            $thumbnailLocation = $source . $this->path . $this->getThumbnailFullName();
 
             if (file_exists($thumbnailLocation)) {
                 $thumbnailSource = $thumbnailLocation;
