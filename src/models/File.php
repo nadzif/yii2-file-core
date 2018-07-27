@@ -232,10 +232,12 @@ class File extends ActiveRecord
         }
 
         if ($this->hasThumbnail()) {
-            if (isset(\Yii::$app->frontendUrlManager)) {
+            if (isset(\Yii::$app->frontendUrlManager->baseUrl)) {
                 $source = \Yii::$app->frontendUrlManager->baseUrl;
-            } else {
+            } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
                 $source = \Yii::$app->urlManager->baseUrl;
+            } else {
+                $source = '/';
             }
 
             $thumbnailLocation = $source . $this->path . $this->getFullName();
@@ -250,10 +252,12 @@ class File extends ActiveRecord
 
     public function getSource()
     {
-        if (isset(\Yii::$app->frontendUrlManager)) {
+        if (isset(\Yii::$app->frontendUrlManager->baseUrl)) {
             $source = \Yii::$app->frontendUrlManager->baseUrl;
-        } else {
+        } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
             $source = \Yii::$app->urlManager->baseUrl;
+        } else {
+            $source = '/';
         }
 
         return $source . $this->path . $this->getFullName();
