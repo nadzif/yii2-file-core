@@ -237,7 +237,7 @@ class File extends ActiveRecord
             } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
                 $source = \Yii::$app->urlManager->baseUrl;
             } else {
-                $source = '/';
+                $source = DIRECTORY_SEPARATOR;
             }
 
             $thumbnailLocation = $source . $this->path . $this->getThumbnailFullName();
@@ -257,7 +257,7 @@ class File extends ActiveRecord
         } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
             $source = \Yii::$app->urlManager->baseUrl;
         } else {
-            $source = '/';
+            $source = DIRECTORY_SEPARATOR;
         }
 
         return $source . $this->path . $this->getFullName();
