@@ -232,7 +232,14 @@ class File extends ActiveRecord
         }
 
         if ($this->hasThumbnail()) {
-            $thumbnailLocation = $this->getFullPath() . $this->getThumbnailFullName();
+            if (isset(\Yii::$app->frontendUrlManager)) {
+                $source = \Yii::$app->frontendUrlManager->baseUrl;
+            } else {
+                $source = \Yii::$app->urlManager->baseUrl;
+            }
+
+            $thumbnailLocation = $source . $this->path . $this->getFullName();
+
             if (file_exists($thumbnailLocation)) {
                 $thumbnailSource = $thumbnailLocation;
             }
