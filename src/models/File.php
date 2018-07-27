@@ -237,11 +237,11 @@ class File extends ActiveRecord
                 $source = \Yii::$app->frontendUrlManager->baseUrl;
             } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
                 $source = \Yii::$app->urlManager->baseUrl;
-            }else{
+            } else {
                 $source = DIRECTORY_SEPARATOR;
             }
 
-            $thumbnailLocation = $source . $this->path . $this->getThumbnailFullName();
+            $thumbnailLocation = $source . '/' . $this->path . $this->getThumbnailFullName();
 
             $thumbnailSource = $thumbnailLocation;
         }
@@ -255,11 +255,11 @@ class File extends ActiveRecord
             $source = \Yii::$app->frontendUrlManager->baseUrl;
         } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
             $source = \Yii::$app->urlManager->baseUrl;
-        }else{
+        } else {
             $source = DIRECTORY_SEPARATOR;
         }
 
-        return $source . $this->path . $this->getFullName();
+        return $source . '/' . $this->path . $this->getFullName();
     }
 
     public function delete()
