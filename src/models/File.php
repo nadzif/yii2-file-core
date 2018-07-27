@@ -244,12 +244,12 @@ class File extends ActiveRecord
     public function getSource()
     {
         if (isset(\Yii::$app->frontendUrlManager)) {
-            $source = \Yii::$app->frontendUrlManager->getBaseUrl();
+            $source = \Yii::$app->frontendUrlManager->baseUrl;
         } else {
-            $source = \Yii::$app->urlManager->getBaseUrl();
+            $source = \Yii::$app->urlManager->baseUrl;
         }
 
-        return $source . $this->path . '/' . $this->getFullName();
+        return $source . $this->path . $this->getFullName();
     }
 
     public function delete()
