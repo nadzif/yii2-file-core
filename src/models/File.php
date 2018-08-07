@@ -59,6 +59,7 @@ class File extends ActiveRecord
                 'class'              => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'updatedAt',
+                'value'              => date('Y-m-d H:i:s')
             ]
         ];
     }
