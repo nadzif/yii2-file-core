@@ -21,8 +21,6 @@ class FileManager extends Component
      */
     public $directoryMode = 0755;
 
-    public $db = 'db';
-
     public $allowGuestToUpload = false;
     public $alias              = File::ALIAS_WEB;
     public $uploadFolder       = 'uploads';
@@ -179,5 +177,6 @@ class FileManager extends Component
             return $text;
         }
     }
+
 
 }

@@ -12,7 +12,7 @@ class m180720_000000_file_init extends Migration
      */
     public function safeUp()
     {
-        switch (\Yii::$app->db->driverName) {
+        switch ($this->db->driverName) {
             case 'mysql':
                 $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
                 break;
