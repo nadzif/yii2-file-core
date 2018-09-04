@@ -18,7 +18,7 @@ add component to your config
 
 do migration via console
 ```
-php yii migrate --migrationPath=@nadzif/migrations
+php yii migrate --migrationPath=@nadzif/yii2-file-core/migrations
 ```
 
 getting fileManager
