@@ -47,6 +47,11 @@ class File extends ActiveRecord
     /** @var FileManager */
     private $fileManager;
 
+    public static function getDb()
+    {
+        return FileManager::getDb();
+    }
+
     public static function tableName()
     {
         return '{{%' . FileManager::$tableName . '}}';

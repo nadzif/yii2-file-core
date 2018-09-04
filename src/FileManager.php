@@ -19,7 +19,9 @@ class FileManager extends Component
     /**
      * Upload config
      */
-    public $directoryMode = 0777;
+    public $directoryMode = 0755;
+
+    public $db = 'db';
 
     public $allowGuestToUpload = false;
     public $alias              = File::ALIAS_WEB;
@@ -176,6 +178,12 @@ class FileManager extends Component
         } else {
             return $text;
         }
+    }
+
+    public function getDb()
+    {
+        $db = $this->db;
+        return \Yii::$app->$db;
     }
 
 
