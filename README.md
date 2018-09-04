@@ -2,6 +2,8 @@
 
 Yii2 file upload with database managemen
 
+add component to your config
+
 ```php
 'fileManager' => [
     'class'                    => \nadzif\file\FileManager::className(),
@@ -14,15 +16,18 @@ Yii2 file upload with database managemen
 ]
 ```
 
+do migration via console
 ```
 php yii migrate --migrationPath=@nadzif/migrations
 ```
 
+getting fileManager
 ```php
 /** @var FileManager $fileManager */
 $fileManager = \Yii::$app->fileManager;
 ```
 
+uploading file from fileInstance
 ```php
 $fileInstance = UploadedFile::getInstanceByName('files');
 /** @var nadzif\file\models\File $file */
