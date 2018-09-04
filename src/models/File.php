@@ -49,7 +49,8 @@ class File extends ActiveRecord
 
     public static function getDb()
     {
-        return FileManager::getDb();
+        $db = FileManager::$db;
+        return \Yii::$app->$db;
     }
 
     public static function tableName()

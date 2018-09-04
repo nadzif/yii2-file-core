@@ -180,11 +180,4 @@ class FileManager extends Component
         }
     }
 
-    public function getDb()
-    {
-        $db = $this->db;
-        return \Yii::$app->$db;
-    }
-
-
 }
