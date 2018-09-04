@@ -5,10 +5,17 @@ namespace nadzif\file;
 
 use nadzif\file\models\File;
 use yii\base\Component;
+use yii\db\Connection;
+use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\UploadedFile;
 
+/**
+ * Class FileManager
+ *
+ * @package nadzif\file
+ */
 class FileManager extends Component
 {
     /**
@@ -20,6 +27,8 @@ class FileManager extends Component
      * Upload config
      */
     public $directoryMode = 0755;
+
+    public $db = 'db';
 
     public $allowGuestToUpload = false;
     public $alias              = File::ALIAS_WEB;
@@ -178,5 +187,9 @@ class FileManager extends Component
         }
     }
 
-
+    public function init()
+    {
+        parent::init();
+        $this->db = Instance::ensure($this->db, Connection::className());
+    }
 }
