@@ -159,6 +159,8 @@ class File extends ActiveRecord
 
             $this->thumbnailExtension = $thumbnailExtension;
             $this->thumbnailFilename  = $thumbnailFilename;
+            $this->thumbnailMimeType  = mime_content_type($thumbnailLocation);
+            $this->thumbnailSize      = filesize($thumbnailLocation);
             $this->save();
             $this->refresh();
         }
