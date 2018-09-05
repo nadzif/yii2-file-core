@@ -40,6 +40,7 @@ class File extends ActiveRecord
     const TYPE_OTHER    = 'other';
 
 
+    const ALIAS_API      = '@api';
     const ALIAS_BACKEND  = '@backend';
     const ALIAS_FRONTEND = '@frontend';
     const ALIAS_WEB      = '@web';
@@ -167,7 +168,9 @@ class File extends ActiveRecord
     {
         $fullPath = \Yii::getAlias($this->alias) . DIRECTORY_SEPARATOR;
 
-        if ($this->alias == self::ALIAS_FRONTEND || $this->alias == self::ALIAS_BACKEND) {
+        if ($this->alias == self::ALIAS_FRONTEND || $this->alias == self::ALIAS_BACKEND
+            || $this->alias == self::ALIAS_API
+        ) {
             $fullPath .= 'web' . DIRECTORY_SEPARATOR;
         }
 
