@@ -8,6 +8,7 @@ add component to your config
 'fileManager' => [
     'class'                    => \nadzif\file\FileManager::className(),
     'alias'                    => \nadzif\file\models\File::ALIAS_FRONTEND,
+    'db'                       => 'db',
     'defaultImageThumbnail'    => '@frontend/web/images/thumb-image.jpg',
     'defaultDocumentThumbnail' => '@frontend/web/images/thumb-document.jpg',
     'defaultAudioThumbnail'    => '@frontend/web/images/thumb-audio.jpg',
