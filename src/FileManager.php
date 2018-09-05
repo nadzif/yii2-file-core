@@ -139,7 +139,10 @@ class FileManager extends Component
 
         $dirPath = \Yii::getAlias($model->alias) . DIRECTORY_SEPARATOR;
 
-        if ($model->alias == File::ALIAS_FRONTEND || $model->alias == File::ALIAS_BACKEND) {
+        if ($model->alias == File::ALIAS_FRONTEND
+            || $model->alias == File::ALIAS_BACKEND
+            || $model->alias == File::ALIAS_API
+        ) {
             $dirPath .= 'web' . DIRECTORY_SEPARATOR;
         }
 
