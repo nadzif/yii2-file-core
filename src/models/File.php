@@ -218,13 +218,16 @@ class File extends ActiveRecord
         return $this->thumbnailFilename . '.' . $this->thumbnailExtension;
     }
 
-    public function getThumbnail($options = [])
+    public function getThumbnail($baseUrl= null, $options = [])
     {
         return Html::img($this->getThumbnailSource(), $options);
     }
 
-    public function getThumbnailSource()
+    public function getThumbnailSource($baseUrl = false)
     {
+        if (!$baseUrl) {
+            $baseUrl = \Yii::$app->urlManager->baseUrl;
+        }
         switch ($this->type) {
             case self::TYPE_IMAGE :
                 $thumbnailSource = $this->fileManager->defaultImageThumbnail;
@@ -244,23 +247,20 @@ class File extends ActiveRecord
         }
 
         if ($this->hasThumbnail()) {
-
-            if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
-                $source = \Yii::$app->frontendUrlManager->baseUrl;
-            } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
-                $source = \Yii::$app->urlManager->baseUrl;
+            if ($this->alias == self::ALIAS_WEB) {
+                $source = $baseUrl . '/';
             } else {
-                $source = DIRECTORY_SEPARATOR;
+                $source = $baseUrl;
             }
 
-            $thumbnailLocation = $source . '/' . $this->path . $this->getThumbnailFullName();
+            $thumbnailLocation = $source . '/' . str_replace('\\', '/', $this->path) . $this->getThumbnailFullName();
 
             $thumbnailSource = $thumbnailLocation;
         }
 
         return $thumbnailSource;
     }
-
+    
     public function getSource()
     {
         if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
