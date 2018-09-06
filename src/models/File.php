@@ -220,10 +220,10 @@ class File extends ActiveRecord
 
     public function getThumbnail($baseUrl= null, $options = [])
     {
-        return Html::img($this->getThumbnailSource(), $options);
+        return Html::img($this->getThumbnailSource($baseUrl), $options);
     }
 
-    public function getThumbnailSource($baseUrl = false)
+    public function getThumbnailSource($baseUrl = null)
     {
         if (!$baseUrl) {
             $baseUrl = \Yii::$app->urlManager->baseUrl;
