@@ -143,7 +143,11 @@ class FileManager extends Component
             || $model->alias == File::ALIAS_BACKEND
             || $model->alias == File::ALIAS_API
         ) {
-            $dirPath .= 'web' . DIRECTORY_SEPARATOR;
+            $dirPath .= 'web';
+        }
+
+        if ($path != null) {
+            $dirPath .= DIRECTORY_SEPARATOR;
         }
 
         $dirPath .= $model->path;
