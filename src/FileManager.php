@@ -129,8 +129,7 @@ class FileManager extends Component
 
         $model->originalName          = $fileInstance->name;
         $model->alias                 = $this->alias;
-        $model->path                  = $this->uploadFolder . DIRECTORY_SEPARATOR;
-        $model->path                  .= $path ? $path . DIRECTORY_SEPARATOR : '';
+        $model->path                  = $this->uploadFolder . DIRECTORY_SEPARATOR . $path;
         $model->filename              = self::slug($fileInstance->baseName) . '_' . dechex(time());
         $model->size                  = $fileInstance->size;
         $model->extension             = $fileInstance->extension;
@@ -143,11 +142,7 @@ class FileManager extends Component
             || $model->alias == File::ALIAS_BACKEND
             || $model->alias == File::ALIAS_API
         ) {
-            $dirPath .= 'web';
-        }
-
-        if ($path != null) {
-            $dirPath .= DIRECTORY_SEPARATOR;
+            $dirPath .= 'web' . DIRECTORY_SEPARATOR;
         }
 
         $dirPath .= $model->path;
@@ -156,7 +151,11 @@ class FileManager extends Component
             mkdir($dirPath, $this->directoryMode, true);
         }
 
-        $fullPath = $dirPath . DIRECTORY_SEPARATOR . $model->filename . '.' . $model->extension;
+        if ($path) {
+            $dirPath .= DIRECTORY_SEPARATOR;
+        }
+
+        $fullPath = $dirPath . $model->filename . '.' . $model->extension;
 
 
         if ($model->validate() && $fileInstance->saveAs($fullPath) && $model->save()) {
