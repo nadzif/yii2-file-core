@@ -7,6 +7,7 @@ use nadzif\file\FileManager;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\imagine\Image;
 
@@ -39,11 +40,20 @@ class File extends ActiveRecord
     const TYPE_AUDIO    = 'audio';
     const TYPE_OTHER    = 'other';
 
+    // list of all (basic, advanced) application
+    const ALIAS_APP     = '@app';
+    const ALIAS_VENDOR  = '@vendor';
+    const ALIAS_RUNTIME = '@runtime';
+    const ALIAS_WEB     = '@web';
+    const ALIAS_WEBROOT = '@webroot';
+    const ALIAS_TESTS   = '@tests';
 
+    // list of advanced application
     const ALIAS_API      = '@api';
+    const ALIAS_COMMON   = '@common';
     const ALIAS_BACKEND  = '@backend';
     const ALIAS_FRONTEND = '@frontend';
-    const ALIAS_WEB      = '@web';
+    const ALIAS_CONSOLE  = '@console';
 
     /** @var FileManager */
     private $fileManager;
@@ -87,9 +97,8 @@ class File extends ActiveRecord
     {
         $thumbnailExtension = $extension ?: $this->fileManager->thumbnailExtension;
         $thumbnailFilename  = $filename
-            ?: strtr($this->fileManager->thumbnailNameFormat, [
-                '{filename}' => $this->filename
-            ]);
+            ?: strtr($this->fileManager->thumbnailNameFormat, ['{filename}' => $this->filename]
+            );
 
         $fileLocation      = $this->getFullPath() . $this->getFullName();
         $thumbnailLocation = $this->getFullPath() . $thumbnailFilename . '.' . $thumbnailExtension;
@@ -170,16 +179,18 @@ class File extends ActiveRecord
     {
         $fullPath = \Yii::getAlias($this->alias) . DIRECTORY_SEPARATOR;
 
-        if ($this->alias == self::ALIAS_FRONTEND
-            || $this->alias == self::ALIAS_BACKEND
-            || $this->alias == self::ALIAS_API
-        ) {
+        if ($this->requireWebFolder()) {
             $fullPath .= 'web' . DIRECTORY_SEPARATOR;
         }
 
         $fullPath .= $this->path . DIRECTORY_SEPARATOR;
 
-        return $fullPath;
+        return str_replace('\\', DIRECTORY_SEPARATOR, $fullPath);
+    }
+
+    public function requireWebFolder()
+    {
+        return !ArrayHelper::isIn($this->alias, [self::ALIAS_WEBROOT, self::ALIAS_WEB]);
     }
 
     public function getFullName()
@@ -218,7 +229,7 @@ class File extends ActiveRecord
         return $this->thumbnailFilename . '.' . $this->thumbnailExtension;
     }
 
-    public function getThumbnail($baseUrl= null, $options = [])
+    public function getThumbnail($baseUrl = null, $options = [])
     {
         return Html::img($this->getThumbnailSource($baseUrl), $options);
     }
@@ -248,19 +259,21 @@ class File extends ActiveRecord
 
         if ($this->hasThumbnail()) {
             if ($this->alias == self::ALIAS_WEB) {
-                $source = $baseUrl . '/';
+                $source = $baseUrl . DIRECTORY_SEPARATOR;
             } else {
                 $source = $baseUrl;
             }
 
-            $thumbnailLocation = $source . '/' . str_replace('\\', '/', $this->path) . $this->getThumbnailFullName();
+            $thumbnailLocation =
+                $source . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $this->path)
+                . $this->getThumbnailFullName();
 
             $thumbnailSource = $thumbnailLocation;
         }
 
         return $thumbnailSource;
     }
-    
+
     public function getSource()
     {
         if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
@@ -271,7 +284,7 @@ class File extends ActiveRecord
             $source = DIRECTORY_SEPARATOR;
         }
 
-        return $source . '/' . $this->path . $this->getFullName();
+        return $source . DIRECTORY_SEPARATOR . $this->path . $this->getFullName();
     }
 
     public function delete()
@@ -293,6 +306,5 @@ class File extends ActiveRecord
 
         return true;
     }
-
 
 }

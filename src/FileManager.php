@@ -9,6 +9,7 @@ use yii\db\Connection;
 use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
+use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -105,28 +106,21 @@ class FileManager extends Component
     {
 
         if (!$this->allowGuestToUpload && \Yii::$app->user->isGuest) {
-            throw new ForbiddenHttpException('Please login to continue upload');
+            throw new UnauthorizedHttpException('Please login to continue upload');
         }
 
         if (!ArrayHelper::isIn($fileInstance->extension, $this->getAllowedExtensions())) {
-            throw new ForbiddenHttpException('File extension not allowed');
+            throw new NotSupportedException('Extension not supported');
+        }
+
+        if ($path !== null) {
+            $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+            $path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
         }
 
         $model = new File();
 
-        if (ArrayHelper::isIn($fileInstance->extension, $this->allowedImageExtensions)) {
-            $model->type = File::TYPE_IMAGE;
-        } elseif (ArrayHelper::isIn($fileInstance->extension, $this->allowedDocumentExtensions)) {
-            $model->type = File::TYPE_DOCUMENT;
-        } elseif (ArrayHelper::isIn($fileInstance->extension, $this->allowedAudioExtensions)) {
-            $model->type = File::TYPE_AUDIO;
-        } elseif (ArrayHelper::isIn($fileInstance->extension, $this->allowedVideoExtensions)) {
-            $model->type = File::TYPE_VIDEO;
-        } else {
-            $model->type = File::TYPE_OTHER;
-        }
-
-
+        $model->type                  = $this->getType($fileInstance->extension);
         $model->originalName          = $fileInstance->name;
         $model->alias                 = $this->alias;
         $model->path                  = $this->uploadFolder . DIRECTORY_SEPARATOR . $path;
@@ -138,10 +132,7 @@ class FileManager extends Component
 
         $dirPath = \Yii::getAlias($model->alias) . DIRECTORY_SEPARATOR;
 
-        if ($model->alias == File::ALIAS_FRONTEND
-            || $model->alias == File::ALIAS_BACKEND
-            || $model->alias == File::ALIAS_API
-        ) {
+        if ($model->requireWebFolder()) {
             $dirPath .= 'web' . DIRECTORY_SEPARATOR;
         }
 
@@ -156,7 +147,7 @@ class FileManager extends Component
         }
 
         $fullPath = $dirPath . $model->filename . '.' . $model->extension;
-
+        $fullPath = str_replace('\\', DIRECTORY_SEPARATOR, $fullPath);
 
         if ($model->validate() && $fileInstance->saveAs($fullPath) && $model->save()) {
             if ($this->createThumbnail) {
@@ -178,6 +169,23 @@ class FileManager extends Component
         );
     }
 
+    public function getType($extension, $default = null)
+    {
+        if (ArrayHelper::isIn($extension, $this->allowedImageExtensions)) {
+            return File::TYPE_IMAGE;
+        } elseif (ArrayHelper::isIn($extension, $this->allowedDocumentExtensions)) {
+            return File::TYPE_DOCUMENT;
+        } elseif (ArrayHelper::isIn($extension, $this->allowedAudioExtensions)) {
+            return File::TYPE_AUDIO;
+        } elseif (ArrayHelper::isIn($extension, $this->allowedVideoExtensions)) {
+            return File::TYPE_VIDEO;
+        } elseif (ArrayHelper::isIn($extension, $this->allowedOtherExtensions)) {
+            return File::TYPE_OTHER;
+        } else {
+            return $defaulr;
+        }
+    }
+
     public static function slug($text, $length = null)
     {
         $text = preg_replace('~[^\\pL\d]+~u', '-', $text);
@@ -197,5 +205,83 @@ class FileManager extends Component
     {
         parent::init();
         $this->db = Instance::ensure($this->db, Connection::className());
+    }
+
+    public function uploadBase64($stringFile, $path = null, $additionalInformation = null)
+    {
+        if (!$this->allowGuestToUpload && \Yii::$app->user->isGuest) {
+            throw new UnauthorizedHttpException('Please login to continue upload');
+        }
+
+        if ($path !== null) {
+            $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+            $path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
+        }
+
+        $model = new File();
+
+        $fileName      = dechex(time()) . \Yii::$app->security->generateRandomString();
+        $fileExtension = '';
+        $fileMime      = '';
+        $fileSize      = 0;
+
+        if (preg_match('/^data:(\w+)\/(\w+);base64,/', $stringFile, $type)) {
+            $stringFile = substr($stringFile, strpos($stringFile, ',') + 1);
+
+            $fileExtension = strtolower($type[2]);
+            $fileMime      = strtolower($type[0]);
+            $fileSize      = (int)(strlen(rtrim($stringFile, '=')) * 3 / 4);
+
+            if (!ArrayHelper::isIn($fileExtension, $this->getAllowedExtensions())) {
+                throw new NotSupportedException('Extension not supported');
+            }
+
+            $model->type = $this->getType($fileExtension);
+
+            $stringFile = base64_decode($stringFile);
+
+            if ($stringFile === false) {
+                throw new NotSupportedException(\Yii::t('app', 'File type not supported.'));
+            }
+        } else {
+            throw new \Exception('did not match data URI with image data');
+        }
+
+        $model->originalName          = $fileName;
+        $model->alias                 = $this->alias;
+        $model->path                  = $this->uploadFolder . DIRECTORY_SEPARATOR . $path;
+        $model->filename              = self::slug($fileName);
+        $model->size                  = $fileSize;
+        $model->extension             = $fileExtension;
+        $model->mimeType              = $fileMime;
+        $model->additionalInformation = $additionalInformation;
+
+        $dirPath = \Yii::getAlias($model->alias) . DIRECTORY_SEPARATOR;
+
+        if ($model->requireWebFolder()) {
+            $dirPath .= 'web' . DIRECTORY_SEPARATOR;
+        }
+
+        $dirPath .= $model->path;
+
+        if (!is_dir($dirPath)) {
+            mkdir($dirPath, $this->directoryMode, true);
+        }
+
+        if ($path) {
+            $dirPath .= DIRECTORY_SEPARATOR;
+        }
+
+        $fullPath = $dirPath . $model->filename . '.' . $model->extension;;
+        $fullPath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $fullPath);
+
+        if ($model->validate() && file_put_contents($fullPath, $stringFile) && $model->save()
+        ) {
+            if ($this->createThumbnail) {
+                $model->createThumbnail($this->thumbnailExtension);
+            }
+        }
+
+        return $model;
     }
 }
