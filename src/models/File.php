@@ -4,7 +4,6 @@ namespace nadzif\file\models;
 
 
 use nadzif\file\FileManager;
-use yii\behaviors\AttributeBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -239,6 +238,7 @@ class File extends ActiveRecord
         if (!$baseUrl) {
             $baseUrl = \Yii::$app->urlManager->baseUrl;
         }
+
         switch ($this->type) {
             case self::TYPE_IMAGE :
                 $thumbnailSource = $this->fileManager->defaultImageThumbnail;
@@ -265,13 +265,14 @@ class File extends ActiveRecord
             }
 
             $thumbnailLocation =
-                $source . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $this->path)
-                . $this->getThumbnailFullName();
+                $source
+                . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $this->path)
+                . DIRECTORY_SEPARATOR . $this->getThumbnailFullName();
 
             $thumbnailSource = $thumbnailLocation;
         }
 
-        return $thumbnailSource;
+        return str_replace([DIRECTORY_SEPARATOR, '\\'], '/', $thumbnailSource);
     }
 
     public function getSource()
@@ -281,10 +282,11 @@ class File extends ActiveRecord
         } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
             $source = \Yii::$app->urlManager->baseUrl;
         } else {
-            $source = DIRECTORY_SEPARATOR;
+            $source = '/';
         }
 
-        return $source . DIRECTORY_SEPARATOR . $this->path . $this->getFullName();
+        $source .= '/' . $this->path . '/' . $this->getFullName();
+        return str_replace([DIRECTORY_SEPARATOR, '\\'], '/', $source);
     }
 
     public function delete()
