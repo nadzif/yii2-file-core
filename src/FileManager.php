@@ -182,7 +182,7 @@ class FileManager extends Component
         } elseif (ArrayHelper::isIn($extension, $this->allowedOtherExtensions)) {
             return File::TYPE_OTHER;
         } else {
-            return $defaulr;
+            return $default;
         }
     }
 
