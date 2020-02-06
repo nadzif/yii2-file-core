@@ -275,14 +275,19 @@ class File extends ActiveRecord
         return str_replace([DIRECTORY_SEPARATOR, '\\'], '/', $thumbnailSource);
     }
 
-    public function getSource()
+    public function getSource($baseUrl = null)
     {
-        if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
-            $source = \Yii::$app->frontendUrlManager->baseUrl;
-        } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
-            $source = \Yii::$app->urlManager->baseUrl;
+
+        if ($baseUrl) {
+            $source = $baseUrl;
         } else {
-            $source = '/';
+            if ($this->alias == self::ALIAS_FRONTEND && isset(\Yii::$app->frontendUrlManager->baseUrl)) {
+                $source = \Yii::$app->frontendUrlManager->baseUrl;
+            } elseif (isset(\Yii::$app->urlManager->baseUrl)) {
+                $source = \Yii::$app->urlManager->baseUrl;
+            } else {
+                $source = '/';
+            }
         }
 
         $source .= '/' . $this->path . '/' . $this->getFullName();
