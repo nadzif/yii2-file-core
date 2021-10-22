@@ -2,8 +2,6 @@
 
 namespace nadzif\file;
 
-
-use nadzif\base\rest\components\HttpException;
 use nadzif\file\models\File;
 use yii\base\Component;
 use yii\base\NotSupportedException;
