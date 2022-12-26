@@ -368,7 +368,6 @@ class FileManager extends Component
             "jlt"         => "application/vnd.hp-jlyt",
             "jnlp"        => "application/x-java-jnlp-file",
             "joda"        => "application/vnd.joost.joda-archive",
-            "jpe"         => "image/jpeg",
             "jpeg"        => "image/jpeg",
             "jpg"         => "image/jpeg",
             "jpgm"        => "video/jpm",
